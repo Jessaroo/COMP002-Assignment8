@@ -10,51 +10,51 @@
 // immediately apply them. Make sure you also notify the user somehow that the preferences
 // were saved.
 
-
 document.addEventListener("DOMContentLoaded", function() {
-    let select = document.getElementById("background-color");
-    let note = document.getElementById("foreground-color");
-    let state;
-  
-    function setState(newState) {
-      select.value = newState.backgroundColor || "#ffffff";
-      note.value = newState.foregroundColor || "#000000";
-  
-      localStorage.setItem("userPreferences", JSON.stringify(newState));
-      state = newState;
-      applyPreferences(state);
-    }
-  
-    function applyPreferences(preferences) {
-      document.body.style.backgroundColor = preferences.backgroundColor;
-      document.body.style.color = preferences.foregroundColor;
-    }
-    setState(JSON.parse(localStorage.getItem("userPreferences")) || {
-      backgroundColor: "#ffffff",
-      foregroundColor: "#000000"
-    });
-    select.addEventListener("change", function() {
-      setState({
-        backgroundColor: select.value,
-        foregroundColor: note.value
-      });
-    });
-    note.addEventListener("change", function() {
-      setState({
-        backgroundColor: select.value,
-        foregroundColor: note.value
-      });
-    });
-    document.getElementById("submit").addEventListener("click", function(event) {
-      event.preventDefault();
-      let backgroundColor = prompt("Enter Preferred Background Color", state.backgroundColor);
-      let foregroundColor = prompt("Enter Preferred Text Color", state.foregroundColor);
-      if (backgroundColor && foregroundColor) {
-        setState({
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor
-        });
-        alert("Preferences saved");
-      }
-    });
+  let selectBackground = document.getElementById("background-color");
+  let selectForeground = document.getElementById("foreground-color");
+  let nameInput = document.getElementById("name");
+  let state;
+
+  function setState(newState) {
+    selectBackground.value = newState.backgroundColor || "#ffffff";
+    selectForeground.value = newState.foregroundColor || "#000000";
+    nameInput.value = newState.name || "";
+    localStorage.setItem("userPreferences", JSON.stringify(newState));
+    state = newState;
+    applyPreferences(state);
+  }
+
+  function applyPreferences(preferences) {
+    document.body.style.backgroundColor = preferences.backgroundColor;
+    document.body.style.color = preferences.foregroundColor;
+  }
+
+  function promptForPreferences() {
+    let backgroundColor = prompt("Enter Preferred Background Color", state.backgroundColor);
+    let foregroundColor = prompt("Enter Preferred Text Color", state.foregroundColor);
+    let name = prompt("Enter Your Name", state.name);
+    return {
+      backgroundColor: backgroundColor || state.backgroundColor,
+      foregroundColor: foregroundColor || state.foregroundColor,
+      name: name || state.name
+    };
+  }
+  setState(JSON.parse(localStorage.getItem("userPreferences")) || {
+    backgroundColor: "#ffffff",
+    foregroundColor: "#000000",
+    name: ""
   });
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    const newPreferences = {
+      backgroundColor: selectBackground.value,
+      foregroundColor: selectForeground.value,
+      name: nameInput.value
+    };
+    setState(newPreferences);
+    alert("Preferences saved");
+  }
+  document.getElementById("submit").addEventListener("click", handleFormSubmit);
+});
